@@ -88,44 +88,46 @@
 
         <!-- FILE -->
         <div class="col-12">
-          <label class="form-label required">BUKTI DUKUNG</label>
+          <label class="form-label required">BUKTI DUKUNG (PDF / JPG / PNG)</label>
           <input type="file" id="buktiFile" class="form-control"
                  accept=".pdf,.jpg,.jpeg,.png" required>
         </div>
 
         <div class="col-12 d-flex gap-2">
-          <button class="btn btn-primary" type="submit">Simpan</button>
+          <button class="btn btn-primary" type="submit">Kirim Data</button>
           <button class="btn btn-secondary" type="reset">Reset</button>
         </div>
       </form>
 
       <div id="status" class="mt-3"></div>
+
     </div>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwq2Mk83yMXiCs3x6UZgiObtybQ8bR6wDCAD3cXgUdFMU5Dl1Ff7sTGGlGI8QJjcY3k/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMWle70OHwkzLq5YBKUEWV6pjf5q1EiFsUavGeHkVPdH2791Nc66ORXLMmFwQ3D10tpg/exec";
 
 const form = document.getElementById("kk-form");
 const statusEl = document.getElementById("status");
 const npsnInput = document.getElementById("npsn");
 
-/* === LOAD DATA SEKOLAH === */
+/* ===== LOAD DATA SEKOLAH ===== */
 npsnInput.addEventListener("blur", async () => {
   const npsn = npsnInput.value.trim();
   if (!npsn) return;
 
+  // cek sudah kirim
   const cek = await fetch(`${SCRIPT_URL}?checkNpsn=${npsn}`);
   const cekJson = await cek.json();
-
   if (cekJson.exists) {
     statusEl.innerHTML =
-      '<div class="alert alert-warning">⚠️ Data untuk NPSN ini sudah dikirim</div>';
+      '<div class="alert alert-warning">⚠️ Data sudah pernah dikirim</div>';
     form.querySelectorAll("input,button").forEach(el => el.disabled = true);
     return;
   }
 
+  // ambil data sekolah
   const res = await fetch(`${SCRIPT_URL}?getSekolah=${npsn}`);
   const json = await res.json();
 
@@ -140,22 +142,20 @@ npsnInput.addEventListener("blur", async () => {
   kecamatan.value = json.kecamatan;
 });
 
-/* === SUBMIT DATA === */
+/* ===== SUBMIT DATA ===== */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (!confirm("Apakah Anda yakin akan mengirim data ini?")) {
-    return;
-  }
+  if (!confirm("Apakah Anda yakin akan mengirim data ini?")) return;
 
   const file = buktiFile.files[0];
   if (!file) return alert("File wajib diunggah");
 
+  statusEl.innerHTML =
+    '<div class="alert alert-info">⏳ Mengirim data...</div>';
+
   const reader = new FileReader();
   reader.onload = async () => {
-    statusEl.innerHTML =
-      '<div class="alert alert-info">⏳ Mengirim data...</div>';
-
     const payload = {
       ...Object.fromEntries(new FormData(form).entries()),
       fileName: `${form.NPSN.value}_${namaSekolah.value.replace(/\W+/g,"_")}.${file.name.split(".").pop()}`,
@@ -184,9 +184,6 @@ form.addEventListener("submit", async (e) => {
   reader.readAsDataURL(file);
 });
 </script>
-
-<!-- SCRIPT UPLOAD & SUBMIT (TETAP SAMA SEPERTI SEBELUMNYA) -->
-<!-- PASTE SCRIPT SUBMIT FILE DARI KODE SEBELUMNYA TANPA DIUBAH -->
 
 </body>
 </html>
