@@ -1,147 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Input Data Sekolah</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Custom CSS -->
-  <style>
-    body {
-      background-color: #f0f4f8;
-    }
-    .form-container {
-      background: #ffffff;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      max-width: 700px;
-      margin: 2rem auto;
-    }
-    h2 {
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #1e3a8a;
-    }
-    .btn-submit {
-      background-color: #1e3a8a;
-      color: #fff;
-    }
-    .btn-submit:hover {
-      background-color: #3b82f6;
-      color: #fff;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitoring Data Sekolah</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* Sticky header, scrollable table body */
+.table-container {
+  max-height: 70vh; /* tinggi tetap untuk scroll */
+  overflow-y: auto;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #1e3a8a;
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+}
+tbody td {
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+}
+tbody tr:nth-child(even) { background-color: #f1f5f9; }
+</style>
 </head>
-<body class="font-sans">
+<body class="bg-gray-100">
 
-<div class="form-container shadow-lg">
-  <h2 class="text-center">Form Input Data Sekolah</h2>
-  
-  <!-- NPSN -->
-  <div class="mb-3">
-    <label for="npsn" class="form-label">NPSN</label>
-    <input type="text" id="npsn" class="form-control" placeholder="Masukkan NPSN" onchange="getSchoolData()">
+<div class="container mx-auto px-4 py-6">
+  <h2 class="text-2xl font-bold text-center mb-6">Monitoring Data Sekolah</h2>
+
+  <div class="mb-4">
+    <input type="text" id="searchInput" placeholder="Cari NPSN, Nama Sekolah, Kecamatan"
+           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300"
+           oninput="filterTable()">
   </div>
 
-  <!-- Info Sekolah -->
-  <div id="schoolInfo" class="mb-4 p-3 border rounded bg-gray-100 text-gray-700">
-    <!-- Nama Sekolah, Alamat, Kecamatan akan muncul di sini -->
+  <div class="table-container border border-gray-300 rounded">
+    <table class="min-w-full table-auto">
+      <thead>
+        <tr>
+          <th class="px-2 py-2">NO</th>
+          <th class="px-2 py-2">NPSN</th>
+          <th class="px-2 py-2">Nama Sekolah</th>
+          <th class="px-2 py-2">Alamat</th>
+          <th class="px-2 py-2">Kecamatan</th>
+          <th class="px-2 py-2">Jumlah Siswa</th>
+          <th class="px-2 py-2">Jumlah Rombel</th>
+          <th class="px-2 py-2">Kursi</th>
+          <th class="px-2 py-2">Meja</th>
+          <th class="px-2 py-2">Meja Guru</th>
+          <th class="px-2 py-2">Kursi Guru</th>
+          <th class="px-2 py-2">Papan Informasi</th>
+          <th class="px-2 py-2">Lemari Arsip</th>
+          <th class="px-2 py-2">Dokumen</th>
+        </tr>
+      </thead>
+      <tbody id="schoolTableBody">
+        <tr><td colspan="14" class="text-center py-4">Loading...</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- Data Tambahan -->
-  <div class="row g-3">
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Siswa</label>
-      <input type="number" id="jumlahSiswa" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Rombel</label>
-      <input type="number" id="jumlahRombel" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Kebutuhan Kursi</label>
-      <input type="number" id="jumlahKursi" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Kebutuhan Meja</label>
-      <input type="number" id="jumlahMeja" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Meja Guru</label>
-      <input type="number" id="jumlahMejaGuru" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Kursi Guru</label>
-      <input type="number" id="jumlahKursiGuru" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Papan Informasi</label>
-      <input type="number" id="jumlahPapan" class="form-control">
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Jumlah Lemari Arsip</label>
-      <input type="number" id="jumlahLemari" class="form-control">
-    </div>
-  </div>
-
-  <!-- Dokumen Pendukung -->
-  <div class="mb-3 mt-3">
-    <label class="form-label">Dokumen Pendukung</label>
-    <input type="file" id="dokumen" class="form-control">
-  </div>
-
-  <!-- Submit Button -->
-  <div class="text-center">
-    <button class="btn btn-submit btn-lg" onclick="submitData()">Submit</button>
-  </div>
+  <div class="flex justify-center mt-4 space-x-2" id="pagination"></div>
 </div>
 
-<!-- Script -->
 <script>
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxsbqqMMRGbNNo8dLnU8mcvI-zgAVFmxvMrU7odE62T3qD2h8d1wyvoDiKSKKx2rhv3-w/exec"; // Ganti dengan Web App URL
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvkTsuxlvTB-o-GkLmiWd_BumI-Ukzwxjxn1yghqdnYMS27tBxVDhNqTy_fMId5ESzNg/exec";
 
-  function getSchoolData() {
-    const npsn = document.getElementById('npsn').value;
-    fetch(`${WEB_APP_URL}?action=getSchool&npsn=${npsn}`)
-      .then(res => res.json())
-      .then(data => {
-        if(data.found){
-          document.getElementById('schoolInfo').innerHTML = 
-            `<strong>Nama Sekolah:</strong> ${data.nama}<br>` +
-            `<strong>Alamat:</strong> ${data.alamat}<br>` +
-            `<strong>Kecamatan:</strong> ${data.kecamatan}`;
-        } else {
-          document.getElementById('schoolInfo').innerHTML = "Data tidak ditemukan";
-        }
-      });
+let allData = [];
+let filteredData = [];
+let currentPage = 1;
+const rowsPerPage = 20;
+
+async function loadData() {
+  try {
+    const res = await fetch(`${WEB_APP_URL}?action=getAllSchools`);
+    const data = await res.json();
+    allData = data;
+    filteredData = allData;
+    renderTablePage(1);
+  } catch (err) {
+    console.error("Error loading data:", err);
+    document.getElementById('schoolTableBody').innerHTML =
+      `<tr><td colspan="14" class="text-center text-red-600 py-4">Gagal memuat data. Periksa Web App URL.</td></tr>`;
+  }
+}
+
+function renderTablePage(page) {
+  const tbody = document.getElementById('schoolTableBody');
+  const start = (page - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = filteredData.slice(start, end);
+
+  if (pageData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="14" class="text-center py-4">Tidak ada data</td></tr>`;
+    document.getElementById('pagination').innerHTML = '';
+    return;
   }
 
-  function submitData() {
-    const npsn = document.getElementById('npsn').value;
-    const formData = new FormData();
-    formData.append("action", "submit");
-    formData.append("npsn", npsn);
-    formData.append("jumlahSiswa", document.getElementById('jumlahSiswa').value);
-    formData.append("jumlahRombel", document.getElementById('jumlahRombel').value);
-    formData.append("jumlahKursi", document.getElementById('jumlahKursi').value);
-    formData.append("jumlahMeja", document.getElementById('jumlahMeja').value);
-    formData.append("jumlahMejaGuru", document.getElementById('jumlahMejaGuru').value);
-    formData.append("jumlahKursiGuru", document.getElementById('jumlahKursiGuru').value);
-    formData.append("jumlahPapan", document.getElementById('jumlahPapan').value);
-    formData.append("jumlahLemari", document.getElementById('jumlahLemari').value);
-    formData.append("dokumen", document.getElementById('dokumen').files[0]);
+  tbody.innerHTML = pageData.map((row, i) => `
+    <tr class="border-b border-gray-200">
+      <td class="px-2 py-1">${start + i + 1}</td>
+      <td class="px-2 py-1">${row.NPSN}</td>
+      <td class="px-2 py-1">${row['NAMA SEKOLAH']}</td>
+      <td class="px-2 py-1">${row.ALAMAT}</td>
+      <td class="px-2 py-1">${row.KECAMATAN}</td>
+      <td class="px-2 py-1">${row['JUMLAH SISWA']}</td>
+      <td class="px-2 py-1">${row['JUMLAH ROMBEL']}</td>
+      <td class="px-2 py-1">${row['JUMLAH KEBUTUHAN KURSI']}</td>
+      <td class="px-2 py-1">${row['JUMLAH KEBUTUHAN MEJA']}</td>
+      <td class="px-2 py-1">${row['JUMLAH KEBUTUHAN MEJA GURU']}</td>
+      <td class="px-2 py-1">${row['JUMLAH KEBUTUHAN KURSI GURU']}</td>
+      <td class="px-2 py-1">${row['JUMLAH KEBUTUHAN PAPAN INFORMASI']}</td>
+      <td class="px-2 py-1">${row['JUMLAH KEBUTUHAN LEMARI ARSIP']}</td>
+      <td class="px-2 py-1">${row['DOKUMEN PENDUKUNG'] ? `<a href="${row['DOKUMEN PENDUKUNG']}" target="_blank" class="text-blue-600 underline">Download</a>` : '-'}</td>
+    </tr>
+  `).join('');
 
-    fetch(WEB_APP_URL, { method: "POST", body: formData })
-      .then(res => res.text())
-      .then(msg => alert(msg));
+  renderPagination(page);
+}
+
+function renderPagination(page) {
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const paginationDiv = document.getElementById('pagination');
+
+  let html = `<button class="px-3 py-1 rounded bg-blue-700 text-white disabled:bg-gray-400" ${page===1?'disabled':''} onclick="gotoPage(${page-1})">Prev</button>`;
+
+  let startPage = Math.max(1, page-2);
+  let endPage = Math.min(totalPages, startPage+4);
+  if(endPage-startPage<4) startPage = Math.max(1,endPage-4);
+
+  for(let i=startPage; i<=endPage; i++) {
+    html += `<button class="px-3 py-1 rounded ${i===page?'bg-gray-400':'bg-blue-700 text-white'} mx-1" onclick="gotoPage(${i})" ${i===page?'disabled':''}>${i}</button>`;
   }
+
+  html += `<button class="px-3 py-1 rounded bg-blue-700 text-white disabled:bg-gray-400" ${page===totalPages?'disabled':''} onclick="gotoPage(${page+1})">Next</button>`;
+
+  paginationDiv.innerHTML = html;
+  currentPage = page;
+}
+
+function gotoPage(page) {
+  renderTablePage(page);
+}
+
+function filterTable() {
+  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+  filteredData = keyword ? allData.filter(r =>
+    (r.NPSN && r.NPSN.toLowerCase().includes(keyword)) ||
+    (r['NAMA SEKOLAH'] && r['NAMA SEKOLAH'].toLowerCase().includes(keyword)) ||
+    (r.KECAMATAN && r.KECAMATAN.toLowerCase().includes(keyword))
+  ) : allData;
+  renderTablePage(1);
+}
+
+window.onload = loadData;
 </script>
+
 </body>
 </html>
