@@ -105,25 +105,83 @@
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9fqwkjlKVK46NDTlsOnNQsEMl3kZhUaBbhW_Zz-Av_YPxHI7SojztRMZ465MzPRv96A/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwq2Mk83yMXiCs3x6UZgiObtybQ8bR6wDCAD3cXgUdFMU5Dl1Ff7sTGGlGI8QJjcY3k/exec";
 
+const form = document.getElementById("kk-form");
+const statusEl = document.getElementById("status");
 const npsnInput = document.getElementById("npsn");
 
+/* === LOAD DATA SEKOLAH === */
 npsnInput.addEventListener("blur", async () => {
   const npsn = npsnInput.value.trim();
   if (!npsn) return;
+
+  const cek = await fetch(`${SCRIPT_URL}?checkNpsn=${npsn}`);
+  const cekJson = await cek.json();
+
+  if (cekJson.exists) {
+    statusEl.innerHTML =
+      '<div class="alert alert-warning">⚠️ Data untuk NPSN ini sudah dikirim</div>';
+    form.querySelectorAll("input,button").forEach(el => el.disabled = true);
+    return;
+  }
 
   const res = await fetch(`${SCRIPT_URL}?getSekolah=${npsn}`);
   const json = await res.json();
 
   if (!json.found) {
-    alert("NPSN tidak ditemukan di database");
+    alert("NPSN tidak ditemukan");
+    form.reset();
     return;
   }
 
-  document.getElementById("namaSekolah").value = json.nama;
-  document.getElementById("alamat").value = json.alamat;
-  document.getElementById("kecamatan").value = json.kecamatan;
+  namaSekolah.value = json.nama;
+  alamat.value = json.alamat;
+  kecamatan.value = json.kecamatan;
+});
+
+/* === SUBMIT DATA === */
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!confirm("Apakah Anda yakin akan mengirim data ini?")) {
+    return;
+  }
+
+  const file = buktiFile.files[0];
+  if (!file) return alert("File wajib diunggah");
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    statusEl.innerHTML =
+      '<div class="alert alert-info">⏳ Mengirim data...</div>';
+
+    const payload = {
+      ...Object.fromEntries(new FormData(form).entries()),
+      fileName: `${form.NPSN.value}_${namaSekolah.value.replace(/\W+/g,"_")}.${file.name.split(".").pop()}`,
+      fileType: file.type,
+      fileBase64: reader.result
+    };
+
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payload })
+    });
+
+    const json = await res.json();
+
+    if (json.success) {
+      statusEl.innerHTML =
+        '<div class="alert alert-success">✅ Data sudah terkirim</div>';
+      form.querySelectorAll("input,button").forEach(el => el.disabled = true);
+    } else {
+      statusEl.innerHTML =
+        `<div class="alert alert-danger">${json.message}</div>`;
+    }
+  };
+
+  reader.readAsDataURL(file);
 });
 </script>
 
