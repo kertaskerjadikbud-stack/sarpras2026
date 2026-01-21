@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Input Sarpras 2026</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body { background:#f7fafc }
+    .required::after { content:" *"; color:red }
+  </style>
+</head>
+<body class="p-4">
+
+<div class="container">
+  <div class="card shadow">
+    <div class="card-body">
+
+      <h5 class="fw-bold mb-3 text-center">
+        INPUT DATA SARANA PRASARANA 2026
+      </h5>
+
+      <form id="kk-form" class="row g-3">
+
+        <!-- NPSN -->
+        <div class="col-md-6">
+          <label class="form-label required">NPSN</label>
+          <input type="text" name="NPSN" id="npsn" class="form-control" required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">NAMA SEKOLAH</label>
+          <input type="text" name="NAMA SEKOLAH" id="namaSekolah" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">ALAMAT</label>
+          <input type="text" name="ALAMAT" id="alamat" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">KECAMATAN</label>
+          <input type="text" name="KECAMATAN" id="kecamatan" class="form-control" readonly>
+        </div>
+
+        <!-- INPUT MANUAL -->
+        <div class="col-md-4">
+          <label class="form-label required">JUMLAH SISWA</label>
+          <input type="number" name="JUMLAH SISWA" class="form-control" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label required">JUMLAH ROMBEL</label>
+          <input type="number" name="JUMLAH ROMBEL" class="form-control" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label required">KEBUTUHAN KURSI SISWA</label>
+          <input type="number" name="KEBUTUHAN KURSI SISWA" class="form-control" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label required">KEBUTUHAN MEJA SISWA</label>
+          <input type="number" name="KEBUTUHAN MEJA SISWA" class="form-control" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label required">KEBUTUHAN KURSI GURU</label>
+          <input type="number" name="KEBUTUHAN KURSI GURU" class="form-control" required>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label required">KEBUTUHAN MEJA GURU</label>
+          <input type="number" name="KEBUTUHAN MEJA GURU" class="form-control" required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label required">KEBUTUHAN PAPAN INFORMASI</label>
+          <input type="number" name="KEBUTUHAN PAPAN INFORMASI" class="form-control" required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label required">KEBUTUHAN LEMARI ARSIP</label>
+          <input type="number" name="KEBUTUHAN LEMARI ARSIP" class="form-control" required>
+        </div>
+
+        <!-- FILE -->
+        <div class="col-12">
+          <label class="form-label required">BUKTI DUKUNG</label>
+          <input type="file" id="buktiFile" class="form-control"
+                 accept=".pdf,.jpg,.jpeg,.png" required>
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-primary" type="submit">Simpan</button>
+          <button class="btn btn-secondary" type="reset">Reset</button>
+        </div>
+      </form>
+
+      <div id="status" class="mt-3"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9fqwkjlKVK46NDTlsOnNQsEMl3kZhUaBbhW_Zz-Av_YPxHI7SojztRMZ465MzPRv96A/exec";
+
+const npsnInput = document.getElementById("npsn");
+
+npsnInput.addEventListener("blur", async () => {
+  const npsn = npsnInput.value.trim();
+  if (!npsn) return;
+
+  const res = await fetch(`${SCRIPT_URL}?getSekolah=${npsn}`);
+  const json = await res.json();
+
+  if (!json.found) {
+    alert("NPSN tidak ditemukan di database");
+    return;
+  }
+
+  document.getElementById("namaSekolah").value = json.nama;
+  document.getElementById("alamat").value = json.alamat;
+  document.getElementById("kecamatan").value = json.kecamatan;
+});
+</script>
+
+<!-- SCRIPT UPLOAD & SUBMIT (TETAP SAMA SEPERTI SEBELUMNYA) -->
+<!-- PASTE SCRIPT SUBMIT FILE DARI KODE SEBELUMNYA TANPA DIUBAH -->
+
+</body>
+</html>
