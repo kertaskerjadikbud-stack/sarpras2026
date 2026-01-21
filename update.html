@@ -1,154 +1,139 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Input Sarpras 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Input Data Sekolah</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <style>
-  body { background:#f7fafc }
-  .required::after { content:" *"; color:red }
-  #preview { max-height:200px; margin-top:10px; }
+body { background-color: #f0f4f8; }
+.form-container { background:#fff; padding:2rem; border-radius:1rem; max-width:800px; margin:2rem auto; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+h2 { font-weight:700; margin-bottom:1rem; color:#1e3a8a;}
+.btn-submit { background-color: #1e3a8a; color:#fff; }
+.btn-submit:hover { background-color: #3b82f6; color:#fff; }
 </style>
 </head>
-<body class="p-4">
+<body class="font-sans">
 
-<div class="container">
-  <div class="card shadow">
-    <div class="card-body">
-      <h5 class="fw-bold mb-3 text-center">INPUT DATA SARANA PRASARANA 2026</h5>
-      <form id="kk-form" class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label required">NPSN</label>
-          <input type="text" name="NPSN" id="npsn" class="form-control" required>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">NAMA SEKOLAH</label>
-          <input type="text" id="namaSekolah" class="form-control" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">ALAMAT</label>
-          <input type="text" id="alamat" class="form-control" readonly>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">KECAMATAN</label>
-          <input type="text" id="kecamatan" class="form-control" readonly>
-        </div>
+<div class="form-container">
+  <h2 class="text-center">Form Input Data Sekolah</h2>
 
-        <!-- Manual input -->
-        <div class="col-md-4"><label class="form-label required">JUMLAH SISWA</label><input type="number" name="JUMLAH SISWA" class="form-control" required></div>
-        <div class="col-md-4"><label class="form-label required">JUMLAH ROMBEL</label><input type="number" name="JUMLAH ROMBEL" class="form-control" required></div>
-        <div class="col-md-4"><label class="form-label required">KEBUTUHAN KURSI SISWA</label><input type="number" name="KEBUTUHAN KURSI SISWA" class="form-control" required></div>
-        <div class="col-md-4"><label class="form-label required">KEBUTUHAN MEJA SISWA</label><input type="number" name="KEBUTUHAN MEJA SISWA" class="form-control" required></div>
-        <div class="col-md-4"><label class="form-label required">KEBUTUHAN KURSI GURU</label><input type="number" name="KEBUTUHAN KURSI GURU" class="form-control" required></div>
-        <div class="col-md-4"><label class="form-label required">KEBUTUHAN MEJA GURU</label><input type="number" name="KEBUTUHAN MEJA GURU" class="form-control" required></div>
-        <div class="col-md-6"><label class="form-label required">KEBUTUHAN PAPAN INFORMASI</label><input type="number" name="KEBUTUHAN PAPAN INFORMASI" class="form-control" required></div>
-        <div class="col-md-6"><label class="form-label required">KEBUTUHAN LEMARI ARSIP</label><input type="number" name="KEBUTUHAN LEMARI ARSIP" class="form-control" required></div>
-
-        <!-- File -->
-        <div class="col-12">
-          <label class="form-label required">BUKTI DUKUNG (PDF/JPG/PNG)</label>
-          <input type="file" id="buktiFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
-          <div id="preview"></div>
-        </div>
-
-        <div class="col-12 d-flex gap-2">
-          <button class="btn btn-primary" type="submit">Kirim</button>
-          <button class="btn btn-secondary" type="reset">Reset</button>
-        </div>
-      </form>
-      <div id="status" class="mt-3"></div>
-    </div>
+  <div class="mb-3">
+    <label for="npsn" class="form-label">NPSN</label>
+    <input type="text" id="npsn" class="form-control" placeholder="Masukkan NPSN" onchange="getSchoolData()">
   </div>
+
+  <div id="schoolInfo" class="mb-4 p-3 border rounded bg-gray-100 text-gray-700"></div>
+
+  <div class="row g-3">
+    <div class="col-md-6"><label class="form-label">Jumlah Siswa</label><input type="number" id="jumlahSiswa" class="form-control" required></div>
+    <div class="col-md-6"><label class="form-label">Jumlah Rombel</label><input type="number" id="jumlahRombel" class="form-control" required></div>
+    <div class="col-md-6"><label class="form-label">Jumlah Kebutuhan Kursi</label><input type="number" id="jumlahKursi" class="form-control" required></div>
+    <div class="col-md-6"><label class="form-label">Jumlah Kebutuhan Meja</label><input type="number" id="jumlahMeja" class="form-control" required></div>
+    <div class="col-md-6"><label class="form-label">Jumlah Meja Guru</label><input type="number" id="jumlahMejaGuru" class="form-control" required></div>
+    <div class="col-md-6"><label class="form-label">Jumlah Kursi Guru</label><input type="number" id="jumlahKursiGuru" class="form-control" required></div>
+    <div class="col-md-6"><label class="form-label">Jumlah Papan Informasi</label><input type="number" id="jumlahPapan" class="form-control" required></div>
+    <div class="col-md-6"><label class="form-label">Jumlah Lemari Arsip</label><input type="number" id="jumlahLemari" class="form-control" required></div>
+  </div>
+
+  <div class="mb-3 mt-3">
+    <label class="form-label">Dokumen Pendukung</label>
+    <input type="file" id="dokumen" class="form-control">
+  </div>
+
+  <div class="text-center">
+    <button class="btn btn-submit btn-lg" onclick="submitData()">Submit</button>
+  </div>
+
+  <div id="statusMsg" class="mt-3 text-center text-red-600"></div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_E3yABF4YD9udF4PitNsOt3eQjGnkUN8kl8FGXfoMm113tL77Q-YkKDyA3AK1BkCM/exec"; // Ganti dengan Web App URL
-const form = document.getElementById("kk-form");
-const statusEl = document.getElementById("status");
-const npsnInput = document.getElementById("npsn");
-const previewEl = document.getElementById("preview");
+// Ganti dengan URL Web App Anda
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvkTsuxlvTB-o-GkLmiWd_BumI-Ukzwxjxn1yghqdnYMS27tBxVDhNqTy_fMId5ESzNg/exec";
 
-let submitted = false; // Cegah submit ganda
+// Ambil data sekolah berdasarkan NPSN
+async function getSchoolData() {
+  const npsn = document.getElementById('npsn').value;
+  if(!npsn) return;
 
-// Load data sekolah
-npsnInput.addEventListener("blur", async () => {
-  const npsn = npsnInput.value.trim();
-  if (!npsn) return;
-  const res = await fetch(`${SCRIPT_URL}?getSekolah=${npsn}`);
-  const json = await res.json();
-  if (!json.found) {
-    alert("NPSN tidak ditemukan di database");
-    form.reset();
-    return;
-  }
-  document.getElementById("namaSekolah").value = json.nama;
-  document.getElementById("alamat").value = json.alamat;
-  document.getElementById("kecamatan").value = json.kecamatan;
-});
-
-// Preview file
-document.getElementById("buktiFile").addEventListener("change", (e)=>{
-  const file = e.target.files[0];
-  if(!file) return previewEl.innerHTML = "";
-  const ext = file.name.split(".").pop().toLowerCase();
-  if(["pdf","jpg","jpeg","png"].includes(ext)){
-    if(ext=="pdf"){
-      previewEl.innerHTML = `<p>Preview PDF: ${file.name}</p>`;
+  try {
+    const res = await fetch(`${WEB_APP_URL}?action=getSchool&npsn=${encodeURIComponent(npsn)}`);
+    if(!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    if(data.found){
+      document.getElementById('schoolInfo').innerHTML =
+        `<strong>Nama Sekolah:</strong> ${data.nama}<br>` +
+        `<strong>Alamat:</strong> ${data.alamat}<br>` +
+        `<strong>Kecamatan:</strong> ${data.kecamatan}`;
     } else {
-      const url = URL.createObjectURL(file);
-      previewEl.innerHTML = `<img src="${url}" id="preview" class="img-fluid border">`;
+      document.getElementById('schoolInfo').innerHTML = "Data tidak ditemukan";
     }
-  } else {
-    alert("Format file hanya PDF/JPG/PNG");
-    e.target.value = "";
-    previewEl.innerHTML = "";
+  } catch(err) {
+    console.error("Fetch error:", err);
+    document.getElementById('statusMsg').innerText = "Gagal mengambil data sekolah. Periksa Web App URL dan akses publik.";
   }
-});
+}
+
+// Convert file ke Base64
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = ()=>resolve({content:reader.result.split(',')[1], name:file.name, mimeType:file.type});
+    reader.onerror = err=>reject(err);
+  });
+}
 
 // Submit data
-form.addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  if(submitted) return alert("Data sudah dikirim");
+async function submitData(){
+  const statusEl = document.getElementById('statusMsg');
+  statusEl.innerText = "";
+  const npsn = document.getElementById('npsn').value;
+  if(!npsn){ alert("NPSN wajib diisi!"); return; }
 
-  if(!confirm("Kirim data sekarang?")) return;
+  let fileObj = null;
+  const fileInput = document.getElementById('dokumen');
+  if(fileInput.files.length>0){
+    try { fileObj = await fileToBase64(fileInput.files[0]); } 
+    catch(err){ statusEl.innerText="Gagal membaca file"; return; }
+  }
 
-  const file = document.getElementById("buktiFile").files[0];
-  if(!file) return alert("File wajib diupload");
-
-  if(file.size>5*1024*1024) return alert("File maksimal 5 MB");
-
-  const npsn = form.NPSN.value.trim();
-  const nama = form["NAMA SEKOLAH"].value.trim();
-  const safeNama = nama.replace(/[^a-zA-Z0-9]/g,"_");
-  const ext = file.name.split(".").pop();
-  const fileName = `${npsn}_${safeNama}.${ext}`;
-
-  statusEl.innerHTML = "⏳ Mengirim data...";
-
-  const reader = new FileReader();
-  reader.onload = async ()=>{
-    const payload = {...Object.fromEntries(new FormData(form).entries()),
-                     fileName, fileType: file.type, fileBase64: reader.result};
-    try{
-      const res = await fetch(SCRIPT_URL,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ payload })
-      });
-      const json = await res.json();
-      if(json.success){
-        statusEl.innerHTML = "✅ Data berhasil disimpan";
-        submitted = true;
-      } else {
-        statusEl.innerHTML = `❌ Terjadi kesalahan: ${json.message}`;
-      }
-    }catch(err){
-      statusEl.innerHTML = `❌ Terjadi kesalahan: ${err.message}`;
-    }
+  const payload = {
+    data:{
+      npsn,
+      jumlahSiswa: document.getElementById('jumlahSiswa').value,
+      jumlahRombel: document.getElementById('jumlahRombel').value,
+      jumlahKursi: document.getElementById('jumlahKursi').value,
+      jumlahMeja: document.getElementById('jumlahMeja').value,
+      jumlahMejaGuru: document.getElementById('jumlahMejaGuru').value,
+      jumlahKursiGuru: document.getElementById('jumlahKursiGuru').value,
+      jumlahPapan: document.getElementById('jumlahPapan').value,
+      jumlahLemari: document.getElementById('jumlahLemari').value
+    },
+    file:fileObj
   };
-  reader.readAsDataURL(file);
-});
+
+  try{
+    const res = await fetch(WEB_APP_URL,{
+      method:"POST",
+      body: JSON.stringify(payload),
+      headers: {"Content-Type":"application/json"}
+    });
+    if(!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const msg = await res.text();
+    alert(msg);
+  } catch(err){
+    console.error("Submit error:", err);
+    statusEl.innerText = "Gagal submit data. Pastikan Web App sudah di-deploy publik.";
+  }
+}
 </script>
 
 </body>
