@@ -22,20 +22,36 @@
   </div>
 </header>
 
+<!-- MAIN -->
 <main class="flex-1 flex justify-center items-center min-h-screen px-4">
 
-  <!-- LOGIN -->
+  <!-- LOGIN BOX -->
   <div id="loginBox" class="w-full max-w-md bg-white p-6 rounded shadow transform -translate-y-20 opacity-0 transition-all duration-700 ease-out">
-    <h2 class="text-center font-bold mb-4">Gunakan NPSN Sekolah Untuk Masuk</h2>
+    
+    <!-- Header -->
+    <h3 class="text-center font-bold text-lg mb-2">
+      PERMINTAAN DATA KEBUTUHAN SARPRAS SEKOLAH NEGERI
+    </h3>
+
+    <!-- Instruksi -->
+    <p class="text-center text-sm text-gray-700 mb-4">
+      Gunakan NPSN Sekolah Untuk Masuk
+    </p>
+
+    <!-- Input NPSN -->
     <input id="npsn" class="form-control mb-3" placeholder="Masukkan NPSN">
-    <button onclick="login()" class="btn btn-primary w-full">Masuk</button>
+
+    <!-- Tombol Masuk -->
+    <button onclick="login()" class="btn btn-primary w-full">
+      Masuk
+    </button>
   </div>
 
-  <!-- FORM INPUT (AWALNYA TERSEMBUNYI) -->
+  <!-- FORM BOX (AWALNYA TERSEMBUNYI) -->
   <div id="formBox" class="w-full max-w-3xl bg-white p-6 rounded shadow hidden mt-6">
     <h2 class="text-center font-bold mb-4">Data Kebutuhan Sarpras Sekolah Tahun 2026</h2>
 
-    <!-- Field info sekolah -->
+    <!-- Info Sekolah -->
     <div class="mb-4">
       <input type="text" id="no" class="form-control mb-2" placeholder="No Sekolah" readonly>
       <input type="text" id="npsnView" class="form-control mb-2" placeholder="NPSN" readonly>
@@ -44,6 +60,7 @@
       <input type="text" id="kecamatan" class="form-control" placeholder="Kecamatan" readonly>
     </div>
 
+    <!-- Form Input -->
     <form id="form">
       <div class="row">
         <div class="col-md-6 mb-3">
@@ -102,23 +119,26 @@
 
 </main>
 
+<!-- FOOTER -->
 <footer class="bg-[#0B2C4D] text-white text-center py-2 text-sm">
   © 2026 Sub Keuangan dan Aset Dinas Pendidikan dan Kebudayaan Kabupaten Donggala
 </footer>
 
+<!-- SCRIPT -->
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbyAUBVmKGOhQQUYTDepcB84fag9GtV5NO4q1Fkcho9QEnDBN07xxsPL5pSJRbgjyIa0/exec';
 let sekolah = null;
 
-// Animasi masuk login
+// Animasi masuk loginBox
 window.addEventListener('DOMContentLoaded', () => {
   const loginBox = document.getElementById('loginBox');
   setTimeout(() => {
     loginBox.classList.remove('-translate-y-20', 'opacity-0');
-    loginBox.classList.add('-translate-y-10', 'opacity-100');
-  }, 100);
+    loginBox.classList.add('translate-y-0', 'opacity-100');
+  }, 200);
 });
 
+// LOGIN
 function login() {
   const npsn = document.getElementById('npsn').value.trim();
   if(!npsn) return alert('NPSN wajib diisi');
@@ -140,6 +160,7 @@ function login() {
     });
 }
 
+// SUBMIT FORM
 document.getElementById('form').addEventListener('submit', async e=>{
   e.preventDefault();
   const fd = new FormData(e.target);
@@ -180,6 +201,7 @@ document.getElementById('form').addEventListener('submit', async e=>{
     });
 });
 
+// Fungsi konversi file ke Base64
 function toBase64(file){
   return new Promise((resolve,reject)=>{
     const reader = new FileReader();
