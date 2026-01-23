@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Monitoring Sarpras - Per Kecamatan</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+.table-container { max-height: 60vh; overflow-y:auto; }
+thead th { position: sticky; top:0; background-color:#0B2C4D; color:white; text-align:center; }
+tbody td { text-align:center; }
+tbody tr:nth-child(even){ background-color:#f1f5f9; }
+.submitted{ background-color:#d1fae5; }
+.progress-wrapper{ margin-bottom: 1rem; }
+.progress-label{ display:flex; justify-content: space-between; font-weight: bold; margin-bottom: 0.25rem; }
+</style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<header class="bg-[#0B2C4D] text-white shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-3 py-3 flex items-center gap-3">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png" alt="Logo" class="h-12 sm:h-16">
+    <div class="flex-1">
+      <h1 class="text-lg font-bold uppercase">Pemerintah Kabupaten Donggala</h1>
+      <h2 class="text-md font-semibold uppercase">Dinas Pendidikan dan Kebudayaan</h2>
+      <p class="text-sm">Dashboard Monitoring Permintaan Data Sarpras Tahun 2026</p>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 container mx-auto px-4 py-6">
+
+  <!-- Progress Total -->
+  <div class="progress-wrapper">
+    <div class="progress-label">
+      <span>Total Submit: <span id="totalSubmitted">0</span></span>
+      <span>Total Belum Submit: <span id="totalNotSubmitted">0</span></span>
+    </div>
+    <div class="progress">
+      <div id="progressSubmitted" class="progress-bar bg-success" role="progressbar" style="width:0%"></div>
+      <div id="progressNotSubmitted" class="progress-bar bg-danger" role="progressbar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Progress Per Kecamatan -->
+  <div id="kecamatanProgress"></div>
+
+  <div class="table-container border border-gray-300 rounded bg-white mt-4">
+    <table class="min-w-full table-auto text-xs sm:text-sm">
+      <thead>
+        <tr>
+          <th>NO</th><th>NPSN</th><th>Nama Sekolah</th><th>Alamat</th><th>Kecamatan</th>
+          <th>Siswa</th><th>Rombel</th><th>Kursi</th><th>Meja</th><th>Meja Guru</th>
+          <th>Kursi Guru</th><th>Papan</th><th>Lemari</th><th>Dokumen</th>
+        </tr>
+      </thead>
+      <tbody id="schoolTableBody"><tr><td colspan="14" class="text-center py-4">Loading...</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="flex justify-center mt-4 space-x-1 flex-wrap" id="pagination"></div>
+</main>
+
+<footer class="bg-[#0B2C4D] text-white text-center py-2 text-sm">
+  DINAS PENDIDIKAN DAN KEBUDAYAAN KABUPATEN DONGGALA © 2026
+</footer>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbyESv22XRPAwV3B2gSy_lP_0XVVUTgDAvMQstFB-mhuRgEuqMU5abV0fdsrt97oJ-AC/exec';
+let allData=[], currentPage=1;
+const rowsPerPage = 20;
+
+// Load data dari GAS
+async function loadData(){
+  try{
+    const res = await fetch(`${API_URL}?action=getAllSchools`);
+    const data = await res.json();
+
+    // Normalisasi key
+    allData = data.map(row=>{
+      const newRow = {};
+      for(let key in row){
+        const newKey = key.trim().toUpperCase().replace(/\s+/g,'_');
+        newRow[newKey] = row[key];
+      }
+      return newRow;
+    });
+
+    updateProgress();
+    renderTablePage(1);
+  } catch(err){
+    console.error(err);
+    document.getElementById('schoolTableBody').innerHTML =
+      `<tr><td colspan="14" class="text-center text-red-600 py-4">Gagal memuat data</td></tr>`;
+  }
+}
+
+// Update progress total dan per kecamatan
+function updateProgress(){
+  const total = allData.length;
+  const submittedCount = allData.filter(r=>r.LOCK==='LOCK').length;
+  const notSubmittedCount = total - submittedCount;
+
+  // Total
+  document.getElementById('totalSubmitted').innerText = submittedCount;
+  document.getElementById('totalNotSubmitted').innerText = notSubmittedCount;
+  document.getElementById('progressSubmitted').style.width = total ? (submittedCount/total*100)+'%' : '0%';
+  document.getElementById('progressNotSubmitted').style.width = total ? (notSubmittedCount/total*100)+'%' : '0%';
+
+  // Per kecamatan
+  const kecamatanMap = {};
+  allData.forEach(r=>{
+    const kec = r.KECAMATAN || 'Tidak Diketahui';
+    if(!kecamatanMap[kec]) kecamatanMap[kec] = [];
+    kecamatanMap[kec].push(r);
+  });
+
+  const container = document.getElementById('kecamatanProgress');
+  container.innerHTML = '';
+  for(let kec in kecamatanMap){
+    const kecData = kecamatanMap[kec];
+    const submitted = kecData.filter(r=>r.LOCK==='LOCK').length;
+    const notSubmitted = kecData.length - submitted;
+    const submittedPercent = kecData.length ? (submitted/kecData.length*100) : 0;
+    const notSubmittedPercent = kecData.length ? (notSubmitted/kecData.length*100) : 0;
+
+    container.innerHTML += `
+      <div class="progress-wrapper">
+        <div class="progress-label">
+          <span>${kec} - Submit: ${submitted}</span>
+          <span>Belum Submit: ${notSubmitted}</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar bg-success" role="progressbar" style="width:${submittedPercent}%"></div>
+          <div class="progress-bar bg-danger" role="progressbar" style="width:${notSubmittedPercent}%"></div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Render halaman tabel
+function renderTablePage(page){
+  const tbody = document.getElementById('schoolTableBody');
+  const start = (page-1)*rowsPerPage;
+  const end = start+rowsPerPage;
+  const pageData = allData.slice(start,end);
+
+  if(pageData.length===0){
+    tbody.innerHTML = `<tr><td colspan="14" class="text-center py-4">Tidak ada data</td></tr>`;
+    document.getElementById('pagination').innerHTML='';
+    return;
+  }
+
+  tbody.innerHTML = pageData.map((row,i)=>{
+    const submitted = row['LOCK']==='LOCK' ? 'submitted' : '';
+    const docLink = row['DOKUMEN_PENDUKUNG'] ? 
+      `<a href="${row['DOKUMEN_PENDUKUNG']}" target="_blank" class="text-blue-600 underline">Download</a>` : '-';
+    return `<tr class="${submitted}">
+      <td>${start+i+1}</td>
+      <td>${row.NPSN||'-'}</td>
+      <td>${row['NAMA_SEKOLAH']||'-'}</td>
+      <td>${row.ALAMAT||'-'}</td>
+      <td>${row.KECAMATAN||'-'}</td>
+      <td>${row['JUMLAH_SISWA']||'-'}</td>
+      <td>${row['JUMLAH_ROMBEL']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_KURSI']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_MEJA']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_MEJA_GURU']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_KURSI_GURU']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_PAPAN_INFORMASI']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_LEMARI_ARSIP']||'-'}</td>
+      <td>${docLink}</td>
+    </tr>`;
+  }).join('');
+
+  renderPagination(page);
+}
+
+// Pagination
+function renderPagination(page){
+  const totalPages = Math.ceil(allData.length/rowsPerPage);
+  const paginationDiv = document.getElementById('pagination');
+  let html = '';
+  html += `<button class="px-3 py-1 bg-blue-700 text-white rounded disabled:bg-gray-400" ${page===1?'disabled':''} onclick="gotoPage(${page-1})">Prev</button>`;
+  for(let i=Math.max(1,page-2);i<=Math.min(totalPages,page+2);i++){
+    html += `<button class="px-3 py-1 mx-1 rounded ${i===page?'bg-gray-400':'bg-blue-700 text-white'}" onclick="gotoPage(${i})" ${i===page?'disabled':''}>${i}</button>`;
+  }
+  html += `<button class="px-3 py-1 bg-blue-700 text-white rounded disabled:bg-gray-400" ${page===totalPages?'disabled':''} onclick="gotoPage(${page+1})">Next</button>`;
+  paginationDiv.innerHTML = html;
+}
+
+function gotoPage(page){ renderTablePage(page); }
+
+window.onload = loadData;
+</script>
+
+</body>
+</html>
