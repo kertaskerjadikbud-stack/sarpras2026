@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Input Data Kebutuhan Sarpras Sekolah</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<!-- ================= HEADER ================= -->
+<header class="bg-[#0B2C4D] text-white shadow sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-3 py-2 flex items-center gap-3">
+
+    <!-- Logo -->
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png"
+      alt="Logo Kabupaten Donggala"
+      class="h-12 sm:h-16"
+    >
+
+    <!-- Text -->
+    <div class="flex-1 leading-tight">
+      <!-- HP -->
+      <h1 class="text-sm font-bold uppercase sm:hidden">
+        Disdikbud Kab. Donggala
+      </h1>
+
+      <!-- Tablet & Desktop -->
+      <div class="hidden sm:block">
+        <h1 class="text-lg font-bold uppercase">
+          Pemerintah Kabupaten Donggala
+        </h1>
+        <h2 class="text-md font-semibold uppercase">
+          Dinas Pendidikan dan Kebudayaan
+        </h2>
+        <p class="text-sm">
+          Alamat : Jalan Jati Kel. ........ Kecamatan ........ Kabupaten Donggala
+        </p>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- JUDUL KHUSUS HP -->
+<div class="bg-white text-center py-2 sm:hidden shadow">
+  <h2 class="text-sm font-semibold">
+    Data Kebutuhan Sarpras Tahun 2026
+  </h2>
+</div>
+
+<!-- ================= CONTENT ================= -->
+<main class="flex-1 p-4 sm:p-6">
+
+<!-- ================= LOGIN ================= -->
+<div id="loginBox" class="max-w-md mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-lg font-bold mb-4 text-center hidden sm:block">
+    Data Kebutuhan Sarpras Tahun 2026
+  </h2>
+
+  <label class="form-label">NPSN Sekolah</label>
+  <input id="npsn" class="form-control mb-3" placeholder="Masukkan NPSN">
+
+  <button onclick="login()" class="btn btn-primary w-full">
+    Login
+  </button>
+</div>
+
+<!-- ================= FORM ================= -->
+<div id="formBox" class="hidden max-w-4xl mx-auto bg-white p-6 rounded shadow">
+
+  <h2 class="text-lg font-bold mb-4">Data Sekolah</h2>
+
+  <!-- DATA OTOMATIS -->
+  <div class="row mb-3">
+    <div class="col-md-2">
+      <label class="form-label">NO</label>
+      <input id="no" class="form-control" readonly>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">NPSN</label>
+      <input id="npsnView" class="form-control" readonly>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Nama Sekolah</label>
+      <input id="namaSekolah" class="form-control" readonly>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <label class="form-label">Alamat</label>
+      <input id="alamat" class="form-control" readonly>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Kecamatan</label>
+      <input id="kecamatan" class="form-control" readonly>
+    </div>
+  </div>
+
+  <hr class="mb-4">
+
+  <!-- INPUT KEBUTUHAN -->
+  <form id="form">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Siswa</label>
+        <input name="jumlahSiswa" class="form-control" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Rombel</label>
+        <input name="jumlahRombel" class="form-control" required>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Kebutuhan Kursi</label>
+        <input name="kursi" class="form-control">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Kebutuhan Meja</label>
+        <input name="meja" class="form-control">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Kebutuhan Meja Guru</label>
+        <input name="mejaGuru" class="form-control">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Kebutuhan Kursi Guru</label>
+        <input name="kursiGuru" class="form-control">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Kebutuhan Papan Informasi</label>
+        <input name="papan" class="form-control">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Jumlah Kebutuhan Lemari Arsip</label>
+        <input name="lemari" class="form-control">
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label">Dokumen Pendukung (PDF / JPG)</label>
+      <input type="file" name="file" class="form-control"
+             accept="application/pdf,image/jpeg,image/png">
+    </div>
+
+    <button class="btn btn-success w-full">
+      Simpan Data
+    </button>
+  </form>
+</div>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="bg-[#0B2C4D] text-white">
+  <div class="text-center py-3 text-xs sm:text-sm font-semibold">
+    DINAS PENDIDIKAN DAN KEBUDAYAAN TAHUN 2026
+  </div>
+</footer>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbwReYdN12xzQ7IHZkfXt09aQzf-yHPF96SHXltOz7eT7U4saAKi1P5NpoxglDAm0J8h/exec';
+let sekolah = null;
+
+function login() {
+  const npsn = document.getElementById('npsn').value.trim();
+  if (!npsn) return alert('NPSN wajib diisi');
+
+  fetch(`${API_URL}?action=login&npsn=${npsn}`, { method: 'POST' })
+    .then(r => r.json())
+    .then(res => {
+      if (res.status === 'ok') {
+        sekolah = res.sekolah;
+
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('formBox').classList.remove('hidden');
+
+        document.getElementById('no').value = sekolah.no;
+        document.getElementById('npsnView').value = sekolah.npsn;
+        document.getElementById('namaSekolah').value = sekolah.nama;
+        document.getElementById('alamat').value = sekolah.alamat;
+        document.getElementById('kecamatan').value = sekolah.kecamatan;
+      } else {
+        alert(res.message);
+      }
+    });
+}
+
+document.getElementById('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const file = fd.get('file');
+
+  let fileBase64 = '', fileName = '', fileType = '';
+
+  if (file && file.size > 0) {
+    fileName = `${sekolah.npsn}_${file.name}`;
+    fileType = file.type;
+    fileBase64 = await toBase64(file);
+  }
+
+  const data = {
+    row: sekolah.row,
+    jumlahSiswa: fd.get('jumlahSiswa'),
+    jumlahRombel: fd.get('jumlahRombel'),
+    kursi: fd.get('kursi'),
+    meja: fd.get('meja'),
+    mejaGuru: fd.get('mejaGuru'),
+    kursiGuru: fd.get('kursiGuru'),
+    papan: fd.get('papan'),
+    lemari: fd.get('lemari'),
+    fileBase64,
+    fileName,
+    fileType
+  };
+
+  const body = new URLSearchParams();
+  body.append('action', 'submit');
+  body.append('data', JSON.stringify(data));
+
+  fetch(API_URL, { method: 'POST', body })
+    .then(r => r.json())
+    .then(res => alert(res.message));
+});
+
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+</script>
+
+</body>
+</html>
