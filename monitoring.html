@@ -3,235 +3,205 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monitoring Permintaan Data Sarpras Sekolah</title>
+<title>Dashboard Monitoring Sarpras - Per Kecamatan</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-/* Scrollable table with sticky header */
-.table-container {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-thead th {
-  position: sticky;
-  top: 0;
-  background-color: #0B2C4D;
-  color: white;
-  text-align: center;
-  vertical-align: middle;
-  white-space: normal;
-}
-tbody td {
-  text-align: center;
-  vertical-align: middle;
-  white-space: normal;
-}
-tbody tr:nth-child(even) {
-  background-color: #f1f5f9;
-}
+.table-container { max-height: 60vh; overflow-y:auto; }
+thead th { position: sticky; top:0; background-color:#0B2C4D; color:white; text-align:center; }
+tbody td { text-align:center; }
+tbody tr:nth-child(even){ background-color:#f1f5f9; }
+/* Row berubah warna jika dokumen sudah diupload */
+.submitted{ background-color:#d1fae5 !important; } 
+.progress-wrapper{ margin-bottom: 1rem; }
+.progress-label{ display:flex; justify-content: space-between; font-weight: bold; margin-bottom: 0.25rem; }
 </style>
 </head>
-
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-<!-- ================= HEADER ================= -->
 <header class="bg-[#0B2C4D] text-white shadow sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-3 py-2 flex items-center gap-3">
-
-    <img
-      src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png"
-      alt="Logo Kabupaten Donggala"
-      class="h-12 sm:h-16"
-    >
-
-    <div class="flex-1 leading-tight">
-      <!-- HP -->
-      <h1 class="text-sm font-bold uppercase sm:hidden">
-        Disdikbud Kab. Donggala
-      </h1>
-
-      <!-- Desktop -->
-      <div class="hidden sm:block">
-        <h1 class="text-lg font-bold uppercase">
-          Pemerintah Kabupaten Donggala
-        </h1>
-        <h2 class="text-md font-semibold uppercase">
-          Dinas Pendidikan dan Kebudayaan
-        </h2>
-        <p class="text-sm">
-          Monitoring Permintaan Data Sarpras Satuan Pendidikan
-        </p>
-      </div>
+  <div class="max-w-7xl mx-auto px-3 py-3 flex items-center gap-3">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png" alt="Logo" class="h-12 sm:h-16">
+    <div class="flex-1">
+      <h1 class="text-lg font-bold uppercase">Pemerintah Kabupaten Donggala</h1>
+      <h2 class="text-md font-semibold uppercase">Dinas Pendidikan dan Kebudayaan</h2>
+      <p class="text-sm">Dashboard Monitoring Permintaan Data Sarpras Tahun 2026</p>
     </div>
-
   </div>
 </header>
 
-<!-- JUDUL KHUSUS HP -->
-<div class="bg-white text-center py-2 sm:hidden shadow">
-  <h2 class="text-sm font-semibold">
-    Monitoring Sarpras Tahun 2026
-  </h2>
-</div>
-
-<!-- ================= CONTENT ================= -->
 <main class="flex-1 container mx-auto px-4 py-6">
 
-  <h2 class="hidden sm:block text-2xl font-bold text-center mb-6">
-    Monitoring Permintaan Data Sarpras Satuan Pendidikan Tahun 2026
-  </h2>
-
-  <!-- SEARCH -->
-  <div class="mb-4">
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Cari NPSN, Nama Sekolah, Kecamatan"
-      class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300"
-      oninput="filterTable()"
-    >
+  <div class="progress-wrapper bg-white p-4 rounded shadow-sm border border-gray-200">
+    <h3 class="text-sm font-bold mb-2 uppercase text-gray-600">Progress Unggah Dokumen Keseluruhan</h3>
+    <div class="progress-label">
+      <span>Sudah Unggah: <span id="totalSubmitted">0</span></span>
+      <span>Belum Unggah: <span id="totalNotSubmitted">0</span></span>
+    </div>
+    <div class="progress" style="height: 20px;">
+      <div id="progressSubmitted" class="progress-bar bg-success" role="progressbar" style="width:0%"></div>
+      <div id="progressNotSubmitted" class="progress-bar bg-danger" role="progressbar" style="width:0%"></div>
+    </div>
   </div>
 
-  <!-- TABLE -->
-  <div class="table-container border border-gray-300 rounded bg-white">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4" id="kecamatanProgress"></div>
+
+  <div class="table-container border border-gray-300 rounded bg-white mt-4 shadow-sm">
     <table class="min-w-full table-auto text-xs sm:text-sm">
       <thead>
         <tr>
-          <th class="px-2 py-2">NO</th>
-          <th class="px-2 py-2">NPSN</th>
-          <th class="px-2 py-2">Nama Sekolah</th>
-          <th class="px-2 py-2">Alamat</th>
-          <th class="px-2 py-2">Kecamatan</th>
-          <th class="px-2 py-2">Siswa</th>
-          <th class="px-2 py-2">Rombel</th>
-          <th class="px-2 py-2">Kursi</th>
-          <th class="px-2 py-2">Meja</th>
-          <th class="px-2 py-2">Meja Guru</th>
-          <th class="px-2 py-2">Kursi Guru</th>
-          <th class="px-2 py-2">Papan</th>
-          <th class="px-2 py-2">Lemari</th>
-          <th class="px-2 py-2">Dokumen</th>
+          <th>NO</th><th>NPSN</th><th>Nama Sekolah</th><th>Alamat</th><th>Kecamatan</th>
+          <th>Siswa</th><th>Rombel</th><th>Kursi</th><th>Meja</th><th>Meja Guru</th>
+          <th>Kursi Guru</th><th>Papan</th><th>Lemari</th><th>Dokumen</th>
         </tr>
       </thead>
-      <tbody id="schoolTableBody">
-        <tr>
-          <td colspan="14" class="text-center py-4">Loading...</td>
-        </tr>
-      </tbody>
+      <tbody id="schoolTableBody"><tr><td colspan="14" class="text-center py-4">Loading...</td></tr></tbody>
     </table>
   </div>
 
-  <!-- PAGINATION -->
   <div class="flex justify-center mt-4 space-x-1 flex-wrap" id="pagination"></div>
-
 </main>
 
-<!-- ================= FOOTER ================= -->
-<footer class="bg-[#0B2C4D] text-white">
-  <div class="text-center py-3 text-xs sm:text-sm font-semibold">
-    DINAS PENDIDIKAN DAN KEBUDAYAAN KABUPATEN DONGGALA © 2026
-  </div>
+<footer class="bg-[#0B2C4D] text-white text-center py-2 text-sm">
+  DINAS PENDIDIKAN DAN KEBUDAYAAN KABUPATEN DONGGALA © 2026
 </footer>
 
-<!-- ================= SCRIPT ================= -->
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZZJ-O42FSI6pveiTfb1B7oRFcsGQhJotBhtnA_fRBvVuKcxg7dbBerm3IU8HEUxBSgA/exec";
-
-let allData = [];
-let filteredData = [];
-let currentPage = 1;
+const API_URL = 'https://script.google.com/macros/s/AKfycbxZZJ-O42FSI6pveiTfb1B7oRFcsGQhJotBhtnA_fRBvVuKcxg7dbBerm3IU8HEUxBSgA/exec';
+let allData=[], currentPage=1;
 const rowsPerPage = 20;
 
-async function loadData() {
-  try {
-    const res = await fetch(`${WEB_APP_URL}?action=getAllSchools`);
+async function loadData(){
+  try{
+    const res = await fetch(`${API_URL}?action=getAllSchools`);
     const data = await res.json();
-    allData = data;
-    filteredData = allData;
+
+    allData = data.map(row=>{
+      const newRow = {};
+      for(let key in row){
+        const newKey = key.trim().toUpperCase().replace(/\s+/g,'_');
+        newRow[newKey] = row[key];
+      }
+      return newRow;
+    });
+
+    updateProgress();
     renderTablePage(1);
-  } catch (err) {
+  } catch(err){
+    console.error(err);
     document.getElementById('schoolTableBody').innerHTML =
-      `<tr><td colspan="14" class="text-center text-red-600 py-4">
-        Gagal memuat data
-      </td></tr>`;
+      `<tr><td colspan="14" class="text-center text-red-600 py-4">Gagal memuat data</td></tr>`;
   }
 }
 
-function renderTablePage(page) {
-  const tbody = document.getElementById('schoolTableBody');
-  const start = (page - 1) * rowsPerPage;
-  const end = start + rowsPerPage;
-  const pageData = filteredData.slice(start, end);
+// LOGIKA BARU: Cek apakah kolom DOKUMEN_PENDUKUNG ada isinya
+function isSubmitted(row) {
+    return row.DOKUMEN_PENDUKUNG && row.DOKUMEN_PENDUKUNG.toString().trim().startsWith('http');
+}
 
-  if (pageData.length === 0) {
+function updateProgress(){
+  const total = allData.length;
+  // Menghitung berdasarkan keberadaan link di kolom dokumen
+  const submittedCount = allData.filter(r => isSubmitted(r)).length;
+  const notSubmittedCount = total - submittedCount;
+
+  document.getElementById('totalSubmitted').innerText = submittedCount;
+  document.getElementById('totalNotSubmitted').innerText = notSubmittedCount;
+  document.getElementById('progressSubmitted').style.width = total ? (submittedCount/total*100)+'%' : '0%';
+  document.getElementById('progressNotSubmitted').style.width = total ? (notSubmittedCount/total*100)+'%' : '0%';
+
+  const kecamatanMap = {};
+  allData.forEach(r=>{
+    const kec = r.KECAMATAN || 'Tidak Diketahui';
+    if(!kecamatanMap[kec]) kecamatanMap[kec] = [];
+    kecamatanMap[kec].push(r);
+  });
+
+  const container = document.getElementById('kecamatanProgress');
+  container.innerHTML = '';
+  
+  // Mengurutkan nama kecamatan
+  Object.keys(kecamatanMap).sort().forEach(kec => {
+    const kecData = kecamatanMap[kec];
+    const submitted = kecData.filter(r => isSubmitted(r)).length;
+    const notSubmitted = kecData.length - submitted;
+    const submittedPercent = kecData.length ? (submitted/kecData.length*100) : 0;
+    const notSubmittedPercent = kecData.length ? (notSubmitted/kecData.length*100) : 0;
+
+    container.innerHTML += `
+      <div class="bg-white p-3 rounded shadow-sm border border-gray-200 progress-wrapper">
+        <div class="progress-label text-xs">
+          <span class="truncate mr-2 text-blue-900">${kec}</span>
+          <span class="text-gray-500">${submitted}/${kecData.length}</span>
+        </div>
+        <div class="progress" style="height: 10px;">
+          <div class="progress-bar bg-success" role="progressbar" style="width:${submittedPercent}%"></div>
+          <div class="progress-bar bg-danger" role="progressbar" style="width:${notSubmittedPercent}%"></div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function renderTablePage(page){
+  const tbody = document.getElementById('schoolTableBody');
+  const start = (page-1)*rowsPerPage;
+  const end = start+rowsPerPage;
+  const pageData = allData.slice(start,end);
+
+  if(pageData.length===0){
     tbody.innerHTML = `<tr><td colspan="14" class="text-center py-4">Tidak ada data</td></tr>`;
-    document.getElementById('pagination').innerHTML = '';
+    document.getElementById('pagination').innerHTML='';
     return;
   }
 
-  tbody.innerHTML = pageData.map((row, i) => `
-    <tr class="border-b">
-      <td>${start + i + 1}</td>
-      <td>${row.NPSN || '-'}</td>
-      <td>${row['NAMA SEKOLAH'] || '-'}</td>
-      <td>${row.ALAMAT || '-'}</td>
-      <td>${row.KECAMATAN || '-'}</td>
-      <td>${row['JUMLAH SISWA'] || '-'}</td>
-      <td>${row['JUMLAH ROMBEL'] || '-'}</td>
-      <td>${row['JUMLAH KEBUTUHAN KURSI'] || '-'}</td>
-      <td>${row['JUMLAH KEBUTUHAN MEJA'] || '-'}</td>
-      <td>${row['JUMLAH KEBUTUHAN MEJA GURU'] || '-'}</td>
-      <td>${row['JUMLAH KEBUTUHAN KURSI GURU'] || '-'}</td>
-      <td>${row['JUMLAH KEBUTUHAN PAPAN INFORMASI'] || '-'}</td>
-      <td>${row['JUMLAH KEBUTUHAN LEMARI ARSIP'] || '-'}</td>
-      <td>
-        ${row['DOKUMEN PENDUKUNG']
-          ? `<a href="${row['DOKUMEN PENDUKUNG']}" target="_blank" class="text-blue-600 underline">Download</a>`
-          : '-'}
-      </td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = pageData.map((row,i)=>{
+    // Baris jadi hijau jika dokumen terisi
+    const hasDoc = isSubmitted(row);
+    const submittedClass = hasDoc ? 'submitted' : '';
+    const docLink = hasDoc ? 
+      `<a href="${row['DOKUMEN_PENDUKUNG']}" target="_blank" class="btn btn-xs btn-primary py-0 px-2 text-[10px]">Lihat Dokumen</a>` : 
+      `<span class="text-gray-400 italic text-[10px]">Belum Unggah</span>`;
+
+    return `<tr class="${submittedClass}">
+      <td>${start+i+1}</td>
+      <td>${row.NPSN||'-'}</td>
+      <td class="text-left font-medium px-2">${row['NAMA_SEKOLAH']||'-'}</td>
+      <td class="text-left px-2">${row.ALAMAT||'-'}</td>
+      <td>${row.KECAMATAN||'-'}</td>
+      <td>${row['JUMLAH_SISWA']||'-'}</td>
+      <td>${row['JUMLAH_ROMBEL']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_KURSI']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_MEJA']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_MEJA_GURU']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_KURSI_GURU']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_PAPAN_INFORMASI']||'-'}</td>
+      <td>${row['JUMLAH_KEBUTUHAN_LEMARI_ARSIP']||'-'}</td>
+      <td class="px-2">${docLink}</td>
+    </tr>`;
+  }).join('');
 
   renderPagination(page);
 }
 
-function renderPagination(page) {
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+function renderPagination(page){
+  const totalPages = Math.ceil(allData.length/rowsPerPage);
   const paginationDiv = document.getElementById('pagination');
   let html = '';
-
-  html += `<button class="px-3 py-1 bg-blue-700 text-white rounded disabled:bg-gray-400"
-            ${page===1?'disabled':''}
-            onclick="gotoPage(${page-1})">Prev</button>`;
-
-  for (let i = Math.max(1, page-2); i <= Math.min(totalPages, page+2); i++) {
-    html += `<button
-      class="px-3 py-1 mx-1 rounded ${i===page?'bg-gray-400':'bg-blue-700 text-white'}"
-      onclick="gotoPage(${i})"
-      ${i===page?'disabled':''}>${i}</button>`;
+  html += `<button class="px-3 py-1 bg-[#0B2C4D] text-white rounded disabled:bg-gray-400" ${page===1?'disabled':''} onclick="gotoPage(${page-1})">Prev</button>`;
+  
+  // Tampilkan hanya beberapa nomor halaman
+  for(let i=Math.max(1,page-2);i<=Math.min(totalPages,page+2);i++){
+    html += `<button class="px-3 py-1 mx-1 rounded ${i===page?'bg-gray-400':'bg-[#0B2C4D] text-white'}" onclick="gotoPage(${i})" ${i===page?'disabled':''}>${i}</button>`;
   }
-
-  html += `<button class="px-3 py-1 bg-blue-700 text-white rounded disabled:bg-gray-400"
-            ${page===totalPages?'disabled':''}
-            onclick="gotoPage(${page+1})">Next</button>`;
-
+  
+  html += `<button class="px-3 py-1 bg-[#0B2C4D] text-white rounded disabled:bg-gray-400" ${page===totalPages?'disabled':''} onclick="gotoPage(${page+1})">Next</button>`;
   paginationDiv.innerHTML = html;
 }
 
-function gotoPage(page) {
-  renderTablePage(page);
-}
-
-function filterTable() {
-  const keyword = document.getElementById('searchInput').value.toLowerCase();
-  filteredData = allData.filter(r =>
-    (r.NPSN || '').toLowerCase().includes(keyword) ||
-    (r['NAMA SEKOLAH'] || '').toLowerCase().includes(keyword) ||
-    (r.KECAMATAN || '').toLowerCase().includes(keyword)
-  );
-  renderTablePage(1);
-}
+function gotoPage(page){ renderTablePage(page); }
 
 window.onload = loadData;
 </script>
